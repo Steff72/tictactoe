@@ -104,10 +104,13 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    alpha = - inf
+    beta = inf
+
     if player(board) == X:
         t = - inf
         for a in actions(board):
-            v = min_value(result(board, a))
+            v = min_value(result(board, a), alpha, beta)
             if v > t:
                 best_action = a
                 t = v
@@ -115,7 +118,7 @@ def minimax(board):
 
     t = inf
     for a in actions(board):
-        v = max_value(result(board, a))
+        v = max_value(result(board, a), alpha, beta)
         if v < t:
             best_action = a
             t = v
@@ -123,23 +126,33 @@ def minimax(board):
 
 
 
-def max_value(board):
+def max_value(board, alpha, beta):
     if terminal(board):
         return utility(board)
 
     v = - inf
     for action in actions(board):
-        v = max(v, min_value(result(board, action)))
+        v = max(v, min_value(result(board, action), alpha, beta))
+        alpha = max(alpha, v)
+
+        if beta <= alpha:
+            break
+
     return v
 
 
-def min_value(board):
+def min_value(board, alpha, beta):
     if terminal(board):
         return utility(board)
 
     v = inf
     for action in actions(board):
-        v = min(v, max_value(result(board, action)))
+        v = min(v, max_value(result(board, action), alpha, beta))
+        beta = min(beta, v)
+
+        if beta <= alpha:
+            break
+        
     return v
 
 
